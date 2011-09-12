@@ -1,0 +1,9 @@
+ebin
+*.swp
+*.dump
+edoc-info
+.DS_Store
+deps/
+doc/api
+t/*.beam
+examples/*.beam
