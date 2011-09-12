@@ -10,7 +10,7 @@
          save_mapping/3, delete_mapping/2,
          make_url/1, make_url/2]).
 
--include_lib("couch_db.hrl").
+-include_lib("couch/include/couch_db.hrl").
 
 -define(TIMEOUT, infinity).
 
