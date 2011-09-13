@@ -17,7 +17,7 @@ This helper allows you to:
 
 - index in real time databases in elastic search
 - search directly data using the CouchDB search api.
-- access to the _collator api.
+- access to the _percolator api.
 
 Installing with CouchDB
 -----------------------
