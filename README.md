@@ -104,7 +104,7 @@ Multi db:
     
     $ curl -XPUT "localhost:5984/testdb1"
     $ curl -XPOST "localhost:5984/testdb1" -d'{"test": 1}' -H"Content-Type: application/json"
-    $ curl -XGET "localhost:15984/_search?q=test:1&pretty=true"
+    $ curl -XGET "localhost:5984/_search?q=test:1&pretty=true"
     {
       "took" : 11,
       "timed_out" : false,
@@ -133,7 +133,7 @@ Multi db:
     Or specify the db you want to search in:
 
 
-    $ curl -XGET "localhost:15984/_search/testdb,testdb1?q=test:1&pretty=true"
+    $ curl -XGET "localhost:5984/_search/testdb,testdb1?q=test:1&pretty=true"
     {
       "took" : 2,
       "timed_out" : false,
