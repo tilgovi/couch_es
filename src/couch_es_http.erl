@@ -10,7 +10,7 @@
 -export([db_search_req/2, multidbs_search_req/1,
          db_percolator_req/2]).
 
--include_lib("couch_db.hrl").
+-include_lib("couch/include/couch_db.hrl").
 
 %% --------------------------------------------------------
 %% http reqs
