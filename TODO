@@ -1,0 +1,5 @@
+- add mapping support
+- add db indexation filter / db
+- suppport cases where the elasticsearch cluster is down
+- add support for lists functions over elasticsearch
+- expose more of the elasticsearch api (_analyzers)
