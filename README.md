@@ -163,15 +163,15 @@ Multi db:
 Configuration
 -------------
 
-[couch_es]
-;backend = couchdb
-;public_host = localhost
-;public_port = 5984
-;bulk_size = 100
-;bulk_timeout = 10
-;username = 
-;password = 
-;concurrency = 10
+    [couch_es]
+    ;backend = couchdb
+    ;public_host = localhost
+    ;public_port = 5984
+    ;bulk_size = 100
+    ;bulk_timeout = 10
+    ;username = 
+    ;password = 
+    ;concurrency = 10
 
 
 backend could be couchdb or bigcouch for now.
