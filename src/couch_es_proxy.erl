@@ -1,6 +1,6 @@
 %%% -*- erlang -*-
 %%%
-%%% This file is part of aspen released under the MIT license. 
+%%% This file is part of couch_es released under the Apache 2 license. 
 %%% See the NOTICE for more information.
 
 -module(couch_es_proxy).
