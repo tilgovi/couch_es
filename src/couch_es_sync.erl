@@ -102,12 +102,14 @@ terminate(_Reason, _State) ->
 %% internal functions 
 %% --------------------------------------------------------
 
-
-do_sync({delete, DbName}, Prefix) ->
-    couch_es_client:delete_index(couch_es_util:prefixed_name(Prefix, DbName));
-
-do_sync({create, DbName}, Prefix) ->
-    couch_es_client:create_index(DbName, couch_es_util:prefixed_name(Prefix, DbName)).
+do_sync({Action, DbName}, Prefix) ->
+    Name = couch_es_util:prefixed_name(Prefix, DbName),
+    case Action of
+    delete ->
+        couch_es_client:delete_index(Name);
+    create ->
+        couch_es_client:create_index(DbName, Name)
+    end.
 
 handle_down_sync(Ref, S = #state{count=C, refs=Refs, mod=Mod}) ->
     case queue:out(S#state.waiting) of
