@@ -21,6 +21,7 @@
 -record(state, {
         db_notifier = nil,
         scan_pid = nil,
+        enabled,
         mod}).
 
 -define(SERVER, ?MODULE).
@@ -34,6 +35,8 @@ start_link() ->
 
 config_changes("couch_es", "backend", V) ->
     gen_server:cast(?MODULE, {set_backend, V});
+config_changes("couch_es", "enabled", V) ->
+    gen_server:cast(?MODULE, {enable, couch_es_util:trim_whitespace(V)});
 config_changes(_, _, _) ->
     ok.
 
@@ -44,28 +47,62 @@ config_changes(_, _, _) ->
 
 init(_) ->
     process_flag(trap_exit, true),
-
     net_kernel:monitor_nodes(true),
 
     BackendStr = couch_config:get("couch_es", "backend",
         "couchdb"),
-
     Mod = couch_es_util:get_backend_module(BackendStr),
 
     ok = couch_config:register(fun ?MODULE:config_changes/3),
 
-    %% start dbs notifications process
-    NotifierPid = db_update_notifier(Mod),
+    IsEnabled = couch_config:get("couch_es", "enabled", "yes"),
 
-    %% initalize index
-    ScanPid = spawn_link(fun() -> scan_all_dbs(Mod) end),
+    InitState = case couch_es_util:trim_whitespace(IsEnabled) of
+        "yes" ->
+            %% start dbs notifications process
+            NotifierPid = db_update_notifier(Mod),
 
-    {ok, #state{db_notifier = NotifierPid,
-                scan_pid = ScanPid,
-                mod = Mod}}.
+            %% initalize index
+            ScanPid = spawn_link(fun() -> scan_all_dbs(Mod) end),
+
+            #state{db_notifier = NotifierPid,
+                        scan_pid = ScanPid,
+                        mod = Mod,
+                        enabled = true};
+        "no" ->
+            #state{mod = Mod, enabled = false}
+    end,
+    {ok, InitState}.
 
 handle_call(_Msg, _From, State) ->
     {noreply, State}.
+
+handle_cast({enable, "yes"}, #state{enabled=Enabled, mod=Mod}=State) ->
+    NewState = case Enabled of
+        true -> State;
+        false ->
+            NotifierPid = db_update_notifier(Mod),
+            ScanPid = spawn_link(fun() -> scan_all_dbs(Mod) end),
+            #state{db_notifier = NotifierPid,
+                        scan_pid = ScanPid,
+                        enabled = true}
+    end,
+
+    {noreply, NewState};
+
+handle_cast({enable, "no"}, #state{enabled=Enabled, db_notifier=NPid,
+            scan_pid=SPid}=State) ->
+    NewState = case Enabled of
+        false -> State;
+        true ->
+            ?LOG_INFO("kill pids", []),
+            couch_util:shutdown_sync(NPid),
+            couch_util:shutdown_sync(SPid),
+            #state{db_notifier = nil, scan_pid = nil, enabled = false}
+    end,
+
+
+    {noreply, NewState};
 
 handle_cast({set_backend, BackendStr}, State) ->
     Mod = couch_es_util:get_backend_module(BackendStr),

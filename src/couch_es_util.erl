@@ -6,7 +6,9 @@
 
 -module(couch_es_util).
 
--export([get_backend_module/1, prefixed_name/2]).
+-export([get_backend_module/1, 
+         prefixed_name/2, 
+         trim_whitespace/1]).
 
 get_backend_module(BackendStr) ->
     case list_to_atom(BackendStr) of
@@ -20,3 +22,6 @@ prefixed_name(Prefix, Name) ->
     "" -> Name;
     _ -> Prefix ++ "_" ++ couch_util:to_list(Name)
     end.
+
+trim_whitespace(Input) ->
+   re:replace(Input, "\\s+", "", [global]).
