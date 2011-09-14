@@ -33,6 +33,7 @@ multidbs_search_req(#httpd{path_parts=[<<"_search">>]}=Req) ->
     couch_es_proxy:handle_proxy_req(Req, Url);
 
 multidbs_search_req(#httpd{path_parts=[<<"_search">>, Dbs|_]}=Req) ->
+    ok = can_read(Req, Dbs),
     Path = string:join(["", binary_to_list(Dbs), "_search"], "/"),
     Url = couch_es_client:make_url(Path, couch_httpd:qs(Req)),
     couch_es_proxy:handle_proxy_req(Req, Url).
@@ -54,3 +55,19 @@ make_search_url(Req, DbName) ->
 make_search_url(Req, DbName, Type) ->
     Path = string:join(["", binary_to_list(DbName), binary_to_list(Type), "_search"], "/"),
     couch_es_client:make_url(Path, couch_httpd:qs(Req)).
+
+
+can_read(#httpd{user_ctx=Ctx}, DbNames) ->
+    DbNames1 = re:split(DbNames, ",", [trim]),
+    do_can_read(DbNames1, [{user_ctx, Ctx}]).
+
+do_can_read([], _Opts) ->
+    ok;
+do_can_read([DbName|Rest], Opts) ->
+    case couch_db:open(DbName, Opts) of
+    {ok, Db} ->
+        catch couch_db:close(Db),
+        do_can_read(Rest, Opts);
+    Error ->
+        throw(Error)
+    end.
