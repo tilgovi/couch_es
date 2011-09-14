@@ -164,16 +164,21 @@ Configuration
 -------------
 
     [couch_es]
+    ; backend to use (couchdb or bigcouch)
     ;backend = couchdb
+    ; ip:host of elasticsearch
+    ;localhost:9200
+    ; couchdb publicinfo where elasticsearch will index
     ;public_host = localhost
     ;public_port = 5984
+    ; number doc to index in the same time
     ;bulk_size = 100
+    ; time before elasticsearch watch changes
     ;bulk_timeout = 10
+    ; credentials
     ;username = 
     ;password = 
+    ; nb tasks to run in the same time to synchronize couch & es
     ;concurrency = 10
-
-
-backend could be couchdb or bigcouch for now.
-
-
+    ; enable couch_es : yes  or no
+    ;enable = yes
