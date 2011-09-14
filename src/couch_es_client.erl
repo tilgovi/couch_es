@@ -22,7 +22,7 @@ create_index(DbName, Name) ->
     {ok, _Status, _Headers, _Body} ->
         ok;
     Error ->
-        twig:log(error, "Can't send river ~p on ~p : ~p",
+        ?LOG_ERROR("Can't send river ~p on ~p : ~p",
             [?JSON_ENCODE(Doc), Url, Error]),
         Error 
     end.
@@ -37,7 +37,7 @@ delete_river(Name) ->
     {ok, _, _, _Body} ->
         ok;
     Error ->
-        twig:log(error, "can't delete index for ~p ~p", [Name,
+        ?LOG_ERROR("can't delete index for ~p ~p", [Name,
                 Error])
     end.
 
@@ -48,7 +48,7 @@ delete_db_index(Name) ->
     {ok, _, _, _Body} ->
         ok;
     Error ->
-        twig:log(error, "can't delete index for ~p ~p", [Name,
+        ?LOG_ERROR("can't delete index for ~p ~p", [Name,
                 Error])
     end.
 
@@ -61,7 +61,7 @@ save_mapping(DbName, Name, Mapping) ->
     {ok, _Status, _Headers, _Body} ->
         ok;
     Error ->
-        twig:log(error, "Can't send mapping ~p on ~p : ~p",
+        ?LOG_ERROR("Can't send mapping ~p on ~p : ~p",
             [?JSON_ENCODE(Mapping), Url, Error]),
         Error 
     end.
@@ -73,7 +73,7 @@ delete_mapping(DbName, Name) ->
     {ok, _Status, _Headers, _Body} ->
         ok;
     Error ->
-        twig:log(error, "Can't delete mapping ~p", [Error]),
+        ?LOG_ERROR("Can't delete mapping ~p", [Error]),
         Error 
     end.
 

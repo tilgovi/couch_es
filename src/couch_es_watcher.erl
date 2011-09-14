@@ -95,7 +95,6 @@ handle_cast({enable, "no"}, #state{enabled=Enabled, db_notifier=NPid,
     NewState = case Enabled of
         false -> State;
         true ->
-            ?LOG_INFO("kill pids", []),
             couch_util:shutdown_sync(NPid),
             couch_util:shutdown_sync(SPid),
             #state{db_notifier = nil, scan_pid = nil, enabled = false}
