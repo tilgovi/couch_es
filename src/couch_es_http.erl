@@ -8,7 +8,7 @@
 -module(couch_es_http).
 
 -export([db_search_req/2, multidbs_search_req/1,
-         db_percolator_req/2]).
+         db_percolator_req/2, db_percolate_req/2]).
 
 -include_lib("couch_db.hrl").
 
@@ -44,6 +44,17 @@ db_percolator_req(#httpd{path_parts=[DbName, <<"_percolator">>]}=Req,
     Path = string:join(["", binary_to_list(DbName), "_percolator"]),
     Url = couch_es_client:make_url(Path, couch_httpd:qs(Req)),
     couch_es_proxy:handle_proxy_req(Req, Url).
+
+%% @doc /db/_percolate handler
+db_percolate_req(#httpd{path_parts=[DbName, <<"_percolate">>]}=Req,
+        _Db) ->
+    Path = string:join(["", binary_to_list(DbName), binary_to_list(DbName), 
+            "_percolate"]),
+    Url = couch_es_client:make_url(Path, couch_httpd:qs(Req)),
+    couch_es_proxy:handle_proxy_req(Req, Url).
+
+
+
 
 %% --------------------------------------------------------
 %% internal functions 
